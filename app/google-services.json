@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "618257832881",
+    "firebase_url": "https://p3healthproject.firebaseio.com",
+    "project_id": "p3healthproject",
+    "storage_bucket": "p3healthproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:618257832881:android:922329c12f4b70c9",
+        "android_client_info": {
+          "package_name": "com.example.marcu.health"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "618257832881-ms91ip0h4vsni13cft4jv4eqcpbb89vf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.marcu.health",
+            "certificate_hash": "f1a7bba81dd9568138b16bac6991e50570d0bd44"
+          }
+        },
+        {
+          "client_id": "618257832881-mp6ouii8ak3msbq6t1oe76vrsd2r28k2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnImVwh_PvMHQ2cEryRVfV_MGr7ScVACk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "618257832881-mp6ouii8ak3msbq6t1oe76vrsd2r28k2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
