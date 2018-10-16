@@ -22,10 +22,10 @@ import SignUp_SignIn.User;
 public class LoginActivity extends AppCompatActivity {
 
     // for Sign Up
-    MaterialEditText edtNewUser, edtNewPassword, edtNewEmail;
+    MaterialEditText NewUser, NewPassword, NewEmail;
 
     // for Sign In
-    MaterialEditText edtUser, edtPassword;
+    MaterialEditText User, Password;
 
     // buttons
     Button btnSignUp, btnSignIn;
@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
 
-        edtPassword = (MaterialEditText) findViewById(R.id.Password);
-        edtUser = (MaterialEditText) findViewById(R.id.User);
+        Password = (MaterialEditText) findViewById(R.id.Password);
+        User = (MaterialEditText) findViewById(R.id.User);
 
 
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn(edtUser.getText().toString().toLowerCase(), edtPassword.getText().toString());
+                signIn(User.getText().toString().toLowerCase(), Password.getText().toString());
             }
         });
     }
@@ -99,9 +99,9 @@ public class LoginActivity extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
         View sign_up_layout = inflater.inflate(R.layout.sign_up_layout, null);
 
-        edtNewUser = (MaterialEditText) sign_up_layout.findViewById(R.id.NewUserName);
-        edtNewEmail = (MaterialEditText) sign_up_layout.findViewById(R.id.NewEmail);
-        edtNewPassword = (MaterialEditText) sign_up_layout.findViewById(R.id.NewPassword);
+        NewUser = (MaterialEditText) sign_up_layout.findViewById(R.id.NewUserName);
+        NewEmail = (MaterialEditText) sign_up_layout.findViewById(R.id.NewEmail);
+        NewPassword = (MaterialEditText) sign_up_layout.findViewById(R.id.NewPassword);
 
         alertDialog.setView(sign_up_layout);
         alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
@@ -110,9 +110,9 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setPositiveButton("Register", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
-                final User user = new User(Objects.requireNonNull(edtNewUser.getText()).toString().toLowerCase(),
-                        Objects.requireNonNull(edtNewPassword.getText()).toString(),
-                        Objects.requireNonNull(edtNewEmail.getText()).toString().toLowerCase());
+                final User user = new User(Objects.requireNonNull(NewUser.getText()).toString().toLowerCase(),
+                        Objects.requireNonNull(NewPassword.getText()).toString(),
+                        Objects.requireNonNull(NewEmail.getText()).toString().toLowerCase());
 
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
