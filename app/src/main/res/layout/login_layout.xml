@@ -82,7 +82,9 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/ripple"
+                />
 
             <Button
                 android:id="@+id/btn_sign_in"
@@ -90,7 +92,9 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/ripple"
+                />
         </LinearLayout>
 
 

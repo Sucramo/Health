@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
 import java.util.Objects;
 
 import SignUp_SignIn.User;
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     MaterialEditText User, Password;
 
     // buttons
-    Button btnSignUp, btnSignIn;
+    Button btnSignUp, btnSignIn, btnRegister;
 
     FirebaseDatabase database;
     DatabaseReference users;
@@ -43,9 +44,8 @@ public class LoginActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         users = database.getReference("Users");
 
-        Password = (MaterialEditText) findViewById(R.id.Password);
         User = (MaterialEditText) findViewById(R.id.User);
-
+        Password = (MaterialEditText) findViewById(R.id.Password);
 
         btnSignIn = (Button) findViewById(R.id.btn_sign_in);
         btnSignUp = (Button) findViewById(R.id.btn_sign_up);
@@ -63,7 +63,9 @@ public class LoginActivity extends AppCompatActivity {
                 signIn(User.getText().toString().toLowerCase(), Password.getText().toString());
             }
         });
+
     }
+
 
     private void signIn(final String username, final String password) {
         users.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -92,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showSignUpDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
         alertDialog.setTitle("Sign Up");
         alertDialog.setMessage("Please fill in your information");
 
@@ -106,8 +108,45 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.setView(sign_up_layout);
         alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
 
+/*
+        btnRegister = (Button) sign_up_layout.findViewById(R.id.btn_register);
+        btnRegister(new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
 
-        alertDialog.setPositiveButton("Register", new DialogInterface.OnClickListener() {
+                            final User user = new User(Objects.requireNonNull(NewUser.getText()).toString().toLowerCase(),
+                                    Objects.requireNonNull(NewPassword.getText()).toString(),
+                                    Objects.requireNonNull(NewEmail.getText()).toString().toLowerCase());
+
+                            users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.child(user.getUserName()).exists())
+                                        Toast.makeText(LoginActivity.this, "User is already registered", Toast.LENGTH_SHORT).show();
+                                    else {
+                                        users.child(user.getUserName())
+                                                .setValue(user);
+                                        Toast.makeText(LoginActivity.this, "User registration successful", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            dialogInterface.dismiss();
+                        }
+                    });
+        alertDialog.show();
+    }
+}
+*/
+
+
+        alertDialog.setPositiveButton("Register", new DialogInterface.OnClickListener()
+
+        {
             @Override
             public void onClick(DialogInterface dialogInterface, int which) {
                 final User user = new User(Objects.requireNonNull(NewUser.getText()).toString().toLowerCase(),
@@ -134,9 +173,7 @@ public class LoginActivity extends AppCompatActivity {
                 dialogInterface.dismiss();
             }
         });
-
         alertDialog.show();
 
     }
-
 }
