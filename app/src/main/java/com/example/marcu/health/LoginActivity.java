@@ -34,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference users;
 
+    // int yayay
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
