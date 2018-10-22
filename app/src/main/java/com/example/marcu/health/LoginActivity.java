@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     FirebaseDatabase database;
     DatabaseReference users;
 
-    // int yayay
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,64 +94,33 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showSignUpDialog() {
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
-        alertDialog.setTitle("Sign Up");
-        alertDialog.setMessage("Please fill in your information");
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = getLayoutInflater();
         View sign_up_layout = inflater.inflate(R.layout.sign_up_layout, null);
+
+        dialog.setTitle("Sign Up");
+        dialog.setMessage("Please fill in your information");
 
         NewUser = (MaterialEditText) sign_up_layout.findViewById(R.id.NewUserName);
         NewEmail = (MaterialEditText) sign_up_layout.findViewById(R.id.NewEmail);
         NewPassword = (MaterialEditText) sign_up_layout.findViewById(R.id.NewPassword);
 
-        alertDialog.setView(sign_up_layout);
-        alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
-
-/*
         btnRegister = (Button) sign_up_layout.findViewById(R.id.btn_register);
-        btnRegister(new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
 
-                            final User user = new User(Objects.requireNonNull(NewUser.getText()).toString().toLowerCase(),
-                                    Objects.requireNonNull(NewPassword.getText()).toString(),
-                                    Objects.requireNonNull(NewEmail.getText()).toString().toLowerCase());
-
-                            users.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.child(user.getUserName()).exists())
-                                        Toast.makeText(LoginActivity.this, "User is already registered", Toast.LENGTH_SHORT).show();
-                                    else {
-                                        users.child(user.getUserName())
-                                                .setValue(user);
-                                        Toast.makeText(LoginActivity.this, "User registration successful", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-                            dialogInterface.dismiss();
-                        }
-                    });
-        alertDialog.show();
-    }
-}
-*/
+        final AlertDialog Dial = dialog.create();
+        dialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+        Dial.setView(sign_up_layout);
 
 
-        alertDialog.setPositiveButton("Register", new DialogInterface.OnClickListener()
-
-        {
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int which) {
+            public void onClick(View v) {
+
                 final User user = new User(Objects.requireNonNull(NewUser.getText()).toString().toLowerCase(),
                         Objects.requireNonNull(NewPassword.getText()).toString(),
                         Objects.requireNonNull(NewEmail.getText()).toString().toLowerCase());
+
 
                 users.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -171,10 +139,13 @@ public class LoginActivity extends AppCompatActivity {
 
                     }
                 });
-                dialogInterface.dismiss();
+
+                Dial.dismiss();
             }
         });
-        alertDialog.show();
-
+        Dial.show();
     }
+
 }
+
+
