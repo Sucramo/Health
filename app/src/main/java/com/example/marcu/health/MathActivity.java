@@ -11,6 +11,7 @@ public class MathActivity {
         int workLoadPastDays = 0;
         int workLoadCurrentDay;
         int tempRPE;
+        int tempHR;
         int tempMinutes;
         int day;
         int week;
@@ -20,12 +21,13 @@ public class MathActivity {
 
         for(week = 1; week <= 4; week++) {
             for (day = 1; day <= 7; day++) {
-                System.out.println("Set RPE for day " + day + " week " + week + ":");
-                tempRPE = input.nextInt();
-                while (tempRPE < 0 || tempRPE > 10) {
-                    System.out.println("RPE must be between 0 and 10. Enter RPE again:");
-                    tempRPE = input.nextInt();
+                System.out.println("Average Heart Rate day " + day + " week " + week + ":");
+                tempHR = input.nextInt();
+                while (tempHR < 60 || tempHR > 200) {
+                    System.out.println("Heart Rate must be between 60 and 220. Enter RPE again:");
+                    tempHR = input.nextInt();
                 }
+                tempRPE = tempHR / 10;
 
                 System.out.println("Set duration in minutes for day " + day + " week " + week + ":");
                 tempMinutes = input.nextInt();
