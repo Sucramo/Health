@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.marcu.health.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(username).exists()) {
                     if (!username.isEmpty()) {
-                        User login = dataSnapshot.child(username).getValue(User.class);
+                        SignUp_SignIn.User login = dataSnapshot.child(username).getValue(User.class);
                         if (login.getPassword().equals(password))
                             Toast.makeText(LoginActivity.this, "Login correct!", Toast.LENGTH_SHORT).show();
                         else

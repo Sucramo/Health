@@ -5,14 +5,16 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 public class StopWatchActivity extends AppCompatActivity {
     private Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
-    Button buttonStart, buttonPause, buttonReset;
+    ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
+    ImageView heartRate, clock;
 
 
     @Override
@@ -21,9 +23,16 @@ public class StopWatchActivity extends AppCompatActivity {
         setContentView(R.layout.layout_stopwatch);
 
         chronometer = findViewById(R.id.chronometer);
-        buttonStart = (Button) findViewById(R.id.start_button);
-        buttonPause = (Button) findViewById(R.id.pause_button);
-        buttonReset = (Button) findViewById(R.id.reset_button);
+        buttonStartOne = (ImageButton) findViewById(R.id.start_button_one);
+        buttonStartTwo = (ImageButton) findViewById(R.id.start_button_two);
+        buttonPause = (ImageButton) findViewById(R.id.pause_button);
+        buttonSave = (ImageButton) findViewById(R.id.save_button);
+        heartRate = (ImageView) findViewById(R.id.heart_rate_icon);
+        clock = (ImageView) findViewById(R.id.clock_icon);
+
+        heartRate.setImageResource(R.drawable.ic_favorite_black_24dp);
+        clock.setImageResource(R.drawable.ic_timer_black_24dp);
+
     }
 
     public void startChronometer(View view) {
@@ -32,9 +41,10 @@ public class StopWatchActivity extends AppCompatActivity {
             chronometer.start();
             running = true;
 
-            buttonStart.setVisibility(View.INVISIBLE);
+            buttonStartOne.setVisibility(View.INVISIBLE);
+            buttonStartTwo.setVisibility(View.INVISIBLE);
             buttonPause.setVisibility(View.VISIBLE);
-            buttonReset.setVisibility(View.VISIBLE);
+            buttonSave.setVisibility(View.VISIBLE);
 
         }
 
@@ -46,7 +56,8 @@ public class StopWatchActivity extends AppCompatActivity {
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             running = false;
 
-            buttonStart.setVisibility(View.VISIBLE);
+            buttonStartOne.setVisibility(View.INVISIBLE);
+            buttonStartTwo.setVisibility(View.VISIBLE);
             buttonPause.setVisibility(View.INVISIBLE);
         }
 
@@ -58,9 +69,10 @@ public class StopWatchActivity extends AppCompatActivity {
         pauseOffset = 0;
         running = false;
 
-        buttonStart.setVisibility(View.VISIBLE);
+        buttonStartOne.setVisibility(View.VISIBLE);
+        buttonStartTwo.setVisibility(View.INVISIBLE);
         buttonPause.setVisibility(View.INVISIBLE);
-        buttonReset.setVisibility(View.INVISIBLE);
+        buttonSave.setVisibility(View.INVISIBLE);
 
     }
 
