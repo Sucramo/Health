@@ -1,66 +1,64 @@
 package com.example.marcu.health;
 
-import java.util.Scanner;
+import java.util.ArrayList;
 
 public class MathActivity {
 
 
+    private static int day;
+    private static int tempHR;
+    private static int tempRPE;
+    private static int tempMinutes;
+    private static int workLoadCurrentDay;
+    private static int workLoadPastDays;
+    private static int acuteWorkload;
+    private static int chronicWorkload;
+    private static double ACWR;
+
     public static void main(String[] args) {
-        Scanner input = new Scanner(System.in);
-        int acuteWorkload = 0;
-        int workLoadPastDays = 0;
-        int workLoadCurrentDay;
-        int tempRPE;
-        int tempHR;
-        int tempMinutes;
-        int day;
-        int week;
-        int workLoadPastWeeks = 0;
-        int chronicWorkload;
-        double ACWR;
 
-        for(week = 1; week <= 4; week++) {
-            for (day = 1; day <= 7; day++) {
-                System.out.println("Average Heart Rate day " + day + " week " + week + ":");
-                tempHR = input.nextInt();
-                while (tempHR < 60 || tempHR > 200) {
-                    System.out.println("Heart Rate must be between 60 and 220. Enter RPE again:");
-                    tempHR = input.nextInt();
-                }
-                tempRPE = tempHR / 10;
+        ArrayList<Integer> al = new ArrayList<>();
 
-                System.out.println("Set duration in minutes for day " + day + " week " + week + ":");
-                tempMinutes = input.nextInt();
+        for (day = 1; day <= 50; day++) {
+            tempHR = (int) (Math.random() * ((200 - 60) + 1)) + 60;
+            tempRPE = tempHR / 10;
+            tempMinutes = (int) (Math.random() * ((120 - 10) + 1)) + 10;
+            workLoadCurrentDay = tempRPE * tempMinutes;
+            if (al.size() >= 28) {
+                al.add(workLoadCurrentDay);
+                al.remove(0);
 
-                workLoadCurrentDay = tempRPE * tempMinutes;
-                workLoadPastDays = workLoadPastDays + workLoadCurrentDay;
+            } else {
+                al.add(workLoadCurrentDay);
 
-                System.out.println("Workload day " + day + " week " + week + ": " + workLoadCurrentDay);
             }
-            acuteWorkload = workLoadPastDays/7;
+            System.out.println(al);
 
-            System.out.println("Your acute work load is: " + acuteWorkload);
 
-            workLoadPastWeeks = workLoadPastWeeks + acuteWorkload;
+            if (al.size() >= 7) {
+                for (int i = al.size() - 1; i >= al.size() - 7; i--) {
+                    workLoadPastDays = workLoadPastDays + al.get(i);
+                }
+                acuteWorkload = workLoadPastDays / 7;
+                System.out.println("Acute Workload: " + acuteWorkload);
+            }
+            workLoadPastDays = 0;
+
+            if (al.size() >= 28) {
+                for (int i = 0; i <= 27; i++) {
+                    workLoadPastDays = workLoadPastDays + al.get(i);
+                }
+                chronicWorkload = workLoadPastDays / 28;
+                System.out.println("Chronic Workload: " + chronicWorkload);
+                ACWR = (double) acuteWorkload / (double) chronicWorkload;
+                System.out.println("ACWR: " + ACWR);
+            }
+
+            workLoadPastDays = 0;
+            System.out.println();
+
         }
 
-        chronicWorkload = workLoadPastWeeks/4;
-
-        System.out.println("Your chronic work load is: " + chronicWorkload);
-
-        ACWR = acuteWorkload/(double)chronicWorkload;
-
-        System.out.println("Your Acute:Chronic Workload Ratio is: " + ACWR);
-
-
-
-
-       /*
-        ACWR acwr = null;
-        acwr.setAcuteWorkload(acuteWorkload);
-        System.out.println(acwr.getAcuteWorkload());
-        */
 
     }
-
 }
