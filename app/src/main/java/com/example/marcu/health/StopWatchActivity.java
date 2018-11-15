@@ -4,15 +4,20 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
 public class StopWatchActivity extends AppCompatActivity {
-    private Chronometer chronometer;
+    private static Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
     Button buttonStart, buttonPause, buttonReset;
+    private static int seconds;
+    private static int HR;
+
+    //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
 
     @Override
@@ -24,6 +29,7 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonStart = (Button) findViewById(R.id.start_button);
         buttonPause = (Button) findViewById(R.id.pause_button);
         buttonReset = (Button) findViewById(R.id.reset_button);
+
     }
 
     public void startChronometer(View view) {
@@ -46,6 +52,8 @@ public class StopWatchActivity extends AppCompatActivity {
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             running = false;
 
+            System.out.println(pauseOffset);
+
             buttonStart.setVisibility(View.VISIBLE);
             buttonPause.setVisibility(View.INVISIBLE);
         }
@@ -54,7 +62,17 @@ public class StopWatchActivity extends AppCompatActivity {
 
     public void resetChronometer(View view) {
         chronometer.stop();
+
+        //This is for getting the ACWR
+        seconds = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase())/1000);
+        HR = getRandomHR();
+        System.out.println("seconds: " + seconds);
+        System.out.println("HR: " + HR);
+        MathActivity mathActivity = new MathActivity();
+        double ACWR = mathActivity.getACWR(seconds, HR);
+
         chronometer.setBase(SystemClock.elapsedRealtime());
+
         pauseOffset = 0;
         running = false;
 
@@ -62,6 +80,12 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause.setVisibility(View.INVISIBLE);
         buttonReset.setVisibility(View.INVISIBLE);
 
+
+    }
+
+    private static int getRandomHR() {
+
+        return (int) (Math.random() * ((200 - 60) + 1)) + 60;
     }
 
 }
