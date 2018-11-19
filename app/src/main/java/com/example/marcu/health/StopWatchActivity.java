@@ -9,13 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
+import java.util.ArrayList;
+
 public class StopWatchActivity extends AppCompatActivity {
-    private static Chronometer chronometer;
+    private Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
     Button buttonStart, buttonPause, buttonReset;
-    private static int seconds;
-    private static int HR;
+    private static ArrayList<Integer> al = new ArrayList<>();
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
@@ -33,7 +34,7 @@ public class StopWatchActivity extends AppCompatActivity {
     }
 
     public void startChronometer(View view) {
-        if(!running) {
+        if (!running) {
             chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
             chronometer.start();
             running = true;
@@ -47,7 +48,7 @@ public class StopWatchActivity extends AppCompatActivity {
     }
 
     public void pauseChronometer(View view) {
-        if(running){
+        if (running) {
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             running = false;
@@ -64,12 +65,13 @@ public class StopWatchActivity extends AppCompatActivity {
         chronometer.stop();
 
         //This is for getting the ACWR
-        seconds = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase())/1000);
-        HR = getRandomHR();
+        int seconds = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000);
+        int HR = getRandomHR();
         System.out.println("seconds: " + seconds);
         System.out.println("HR: " + HR);
         MathActivity mathActivity = new MathActivity();
-        double ACWR = mathActivity.getACWR(seconds, HR);
+        double ACWR = mathActivity.getACWR(seconds, HR, al);
+
 
         chronometer.setBase(SystemClock.elapsedRealtime());
 
