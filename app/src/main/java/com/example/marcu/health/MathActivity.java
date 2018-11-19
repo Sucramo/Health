@@ -7,10 +7,9 @@ public class MathActivity {
     private static int workLoadPastDays;
     private static int acuteWorkload;
     private static double ACWR;
-    private ArrayList<Integer> al = new ArrayList<>();
 
 
-    public double getACWR(int tempMinutes, int tempHR) {
+    public double getACWR(int tempMinutes, int tempHR, ArrayList<Integer> al) {
 
         int tempRPE = tempHR / 10;
         int workLoadCurrentDay = tempRPE * tempMinutes;
