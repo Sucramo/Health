@@ -27,16 +27,16 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonStartTwo = (ImageButton) findViewById(R.id.start_button_two);
         buttonPause = (ImageButton) findViewById(R.id.pause_button);
         buttonSave = (ImageButton) findViewById(R.id.save_button);
-        heartRate = (ImageView) findViewById(R.id.heart_rate_icon);
-        clock = (ImageView) findViewById(R.id.clock_icon);
+        //heartRate = (ImageView) findViewById(R.id.heart_rate_icon);
+        //clock = (ImageView) findViewById(R.id.clock_icon);
 
-        heartRate.setImageResource(R.drawable.ic_favorite_black_24dp);
-        clock.setImageResource(R.drawable.ic_timer_black_24dp);
+        //heartRate.setImageResource(R.drawable.ic_favorite_black_24dp);
+        //clock.setImageResource(R.drawable.ic_timer_black_24dp);
 
     }
 
     public void startChronometer(View view) {
-        if(!running) {
+        if (!running) {
             chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
             chronometer.start();
             running = true;
@@ -51,14 +51,15 @@ public class StopWatchActivity extends AppCompatActivity {
     }
 
     public void pauseChronometer(View view) {
-        if(running){
+        if (running) {
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime() - chronometer.getBase();
             running = false;
 
-            buttonStartOne.setVisibility(View.INVISIBLE);
-            buttonStartTwo.setVisibility(View.VISIBLE);
+            //buttonStartOne.setVisibility(View.INVISIBLE);
             buttonPause.setVisibility(View.INVISIBLE);
+            buttonStartTwo.setVisibility(View.VISIBLE);
+            buttonSave.setVisibility(View.VISIBLE);
         }
 
     }
