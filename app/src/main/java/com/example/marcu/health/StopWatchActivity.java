@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.ImageButton;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class StopWatchActivity extends AppCompatActivity {
     private Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
-    Button buttonStart, buttonPause, buttonReset;
+    ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     private static ArrayList<Integer> al = new ArrayList<>();
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
@@ -27,9 +28,10 @@ public class StopWatchActivity extends AppCompatActivity {
         setContentView(R.layout.layout_stopwatch);
 
         chronometer = findViewById(R.id.chronometer);
-        buttonStart = (Button) findViewById(R.id.start_button);
-        buttonPause = (Button) findViewById(R.id.pause_button);
-        buttonReset = (Button) findViewById(R.id.reset_button);
+        buttonStartOne = (ImageButton) findViewById(R.id.start_button_one);
+        buttonStartTwo = (ImageButton) findViewById(R.id.start_button_two);
+        buttonPause = (ImageButton) findViewById(R.id.pause_button);
+        buttonSave = (ImageButton) findViewById(R.id.save_button);
 
     }
 
@@ -39,9 +41,10 @@ public class StopWatchActivity extends AppCompatActivity {
             chronometer.start();
             running = true;
 
-            buttonStart.setVisibility(View.INVISIBLE);
+            buttonStartOne.setVisibility(View.INVISIBLE);
+            buttonStartTwo.setVisibility(View.INVISIBLE);
             buttonPause.setVisibility(View.VISIBLE);
-            buttonReset.setVisibility(View.VISIBLE);
+            buttonSave.setVisibility(View.VISIBLE);
 
         }
 
@@ -55,8 +58,10 @@ public class StopWatchActivity extends AppCompatActivity {
 
             System.out.println(pauseOffset);
 
-            buttonStart.setVisibility(View.VISIBLE);
+            buttonStartOne.setVisibility(View.INVISIBLE);
+            buttonStartTwo.setVisibility(View.VISIBLE);
             buttonPause.setVisibility(View.INVISIBLE);
+            buttonSave.setVisibility(View.VISIBLE);
         }
 
     }
@@ -78,9 +83,10 @@ public class StopWatchActivity extends AppCompatActivity {
         pauseOffset = 0;
         running = false;
 
-        buttonStart.setVisibility(View.VISIBLE);
+        buttonStartOne.setVisibility(View.VISIBLE);
+        buttonStartTwo.setVisibility(View.INVISIBLE);
         buttonPause.setVisibility(View.INVISIBLE);
-        buttonReset.setVisibility(View.INVISIBLE);
+        buttonSave.setVisibility(View.INVISIBLE);
 
 
     }
