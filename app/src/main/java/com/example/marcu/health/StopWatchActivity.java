@@ -1,10 +1,14 @@
 package com.example.marcu.health;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -32,6 +36,26 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonStartTwo = (ImageButton) findViewById(R.id.start_button_two);
         buttonPause = (ImageButton) findViewById(R.id.pause_button);
         buttonSave = (ImageButton) findViewById(R.id.save_button);
+
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_profile:
+                        // open profile fragment
+                        break;
+                    case R.id.action_tracking:
+                        // open tracking fragment
+                        break;
+                    case R.id.action_history:
+                        //open history fragment
+                        break;
+
+                }
+                return true;
+            }
+        });
 
     }
 
