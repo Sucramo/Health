@@ -15,6 +15,7 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class StopWatchActivity extends AppCompatActivity {
     private Chronometer chronometer;
@@ -64,6 +65,7 @@ public class StopWatchActivity extends AppCompatActivity {
             chronometer.setBase(SystemClock.elapsedRealtime() - pauseOffset);
             chronometer.start();
             running = true;
+
 
             buttonStartOne.setVisibility(View.INVISIBLE);
             buttonStartTwo.setVisibility(View.INVISIBLE);
@@ -119,5 +121,4 @@ public class StopWatchActivity extends AppCompatActivity {
 
         return (int) (Math.random() * ((200 - 60) + 1)) + 60;
     }
-
 }
