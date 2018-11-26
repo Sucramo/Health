@@ -94,15 +94,18 @@ public class MathActivity {
         return ACWR;
     }
 
-    public long getDaysBetween(Date one, Date two) {
-        long difference = ((one.getTime() - two.getTime()) / 86400000);
+    private long getDaysBetween(Date one, Date two) {
+        long difference = 0;
+        try {
+            difference = ((one.getTime() - two.getTime()) / 86400000);
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         return Math.abs(difference);
     }
 
     private static Date getNewDate() {
-
         return new Date();
     }
-
-
 }

@@ -17,37 +17,37 @@
 
 
         <Chronometer
-            android:fontFamily="sans-serif"
             android:id="@+id/chronometer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif"
             android:paddingTop="30dp"
             android:textSize="80sp" />
 
         <TextView
-            android:fontFamily="sans-serif"
             android:id="@+id/heartrate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/chronometer"
             android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif"
             android:text="0"
             android:textSize="80sp" />
 
         <TextView
-            android:fontFamily="sans-serif-condensed"
             android:id="@+id/textviewHR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/heartrate"
-            android:text="HEART RATE"
             android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-condensed"
             android:paddingBottom="40dp"
-            />
+            android:text="HEART RATE" />
 
 
         <RelativeLayout
+            android:id="@+id/button_layout"
             android:layout_width="230dp"
             android:layout_height="100dp"
             android:layout_below="@+id/textviewHR"
@@ -70,7 +70,7 @@
                 android:background="@null"
                 android:onClick="pauseChronometer"
                 android:src="@drawable/ic_pause"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
             <ImageButton
                 android:id="@+id/start_button_two"
@@ -81,21 +81,41 @@
                 android:background="@null"
                 android:onClick="startChronometer"
                 android:src="@drawable/ic_play"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
             <ImageButton
-                android:layout_alignParentEnd="true"
                 android:id="@+id/save_button"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                android:layout_alignParentEnd="true"
                 android:layout_centerHorizontal="true"
                 android:background="@null"
                 android:onClick="resetChronometer"
                 android:src="@drawable/ic_stop_red_150dp"
-                android:visibility="invisible"/>
+                android:visibility="invisible" />
 
 
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/test_training_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:onClick="addATraining"
+            android:text="Add a test training" />
+
+        <TextView
+            android:id="@+id/text_view_acwr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/test_training_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="ACWR"
+            android:textSize="25sp" />
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -105,7 +125,7 @@
             app:itemBackground="@color/colorPrimary"
             app:itemIconTint="@drawable/nav_item_color_state"
             app:itemTextColor="@drawable/nav_item_color_state"
-            app:menu="@menu/bottom_navigation_menu"/>
+            app:menu="@menu/bottom_navigation_menu" />
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
