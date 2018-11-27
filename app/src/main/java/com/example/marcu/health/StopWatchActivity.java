@@ -1,18 +1,16 @@
 package com.example.marcu.health;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ public class StopWatchActivity extends AppCompatActivity {
     TextView textViewACWR;
     private static ArrayList<Integer> al = new ArrayList<>();
     private static double ACWR;
-    ProgressBar progressBar;
+    private CustomSeekBar seekbar;
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
@@ -35,14 +33,16 @@ public class StopWatchActivity extends AppCompatActivity {
         setContentView(R.layout.layout_stopwatch);
 
         chronometer = findViewById(R.id.chronometer);
-        buttonStartOne = (ImageButton) findViewById(R.id.start_button_one);
-        buttonStartTwo = (ImageButton) findViewById(R.id.start_button_two);
-        buttonPause = (ImageButton) findViewById(R.id.pause_button);
-        buttonSave = (ImageButton) findViewById(R.id.save_button);
-        textViewACWR = (TextView) findViewById(R.id.text_view_acwr);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        buttonStartOne = findViewById(R.id.start_button_one);
+        buttonStartTwo = findViewById(R.id.start_button_two);
+        buttonPause = findViewById(R.id.pause_button);
+        buttonSave = findViewById(R.id.save_button);
+        textViewACWR = findViewById(R.id.text_view_acwr);
+        seekbar = findViewById(R.id.seekBar);
+        initDataToSeekbar();
+        seekbar.setEnabled(false);
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -60,6 +60,33 @@ public class StopWatchActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void initDataToSeekbar() {
+        ArrayList<ProgressItem> progressItemList = new ArrayList<>();
+        // red span
+        ProgressItem mProgressItem = new ProgressItem();
+        float totalSpan = 20;
+        float redSpan = 8;
+        mProgressItem.progressItemPercentage = ((redSpan / totalSpan) * 100);
+        Log.i("Mainactivity", mProgressItem.progressItemPercentage + "");
+        mProgressItem.color = R.color.red;
+        progressItemList.add(mProgressItem);
+        // green span
+        mProgressItem = new ProgressItem();
+        float greenSpan = 5;
+        mProgressItem.progressItemPercentage = (greenSpan / totalSpan) * 100;
+        mProgressItem.color = R.color.green;
+        progressItemList.add(mProgressItem);
+        // red span 2
+        mProgressItem = new ProgressItem();
+        float redspan2 = 7;
+        mProgressItem.progressItemPercentage = (redspan2 / totalSpan) * 100;
+        mProgressItem.color = R.color.red;
+        progressItemList.add(mProgressItem);
+
+        seekbar.initData(progressItemList);
+        seekbar.invalidate();
     }
 
     public void startChronometer(View view) {
@@ -122,8 +149,8 @@ public class StopWatchActivity extends AppCompatActivity {
 
         String StringACWR = Double.valueOf(ACWR).toString();
         textViewACWR.setText(StringACWR);
-        int percentageACWR = (int) (ACWR*100)/2;
-        progressBar.setProgress(percentageACWR);
+        int percentageACWR = (int) (ACWR * 100) / 2;
+        seekbar.setProgress(percentageACWR);
     }
 
     private static int getRandomHR() {
