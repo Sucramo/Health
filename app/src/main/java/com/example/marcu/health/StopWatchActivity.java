@@ -1,6 +1,7 @@
 package com.example.marcu.health;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,8 +9,10 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,6 +25,7 @@ public class StopWatchActivity extends AppCompatActivity {
     TextView textViewACWR;
     private static ArrayList<Integer> al = new ArrayList<>();
     private static double ACWR;
+    ProgressBar progressBar;
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
@@ -36,6 +40,7 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause = (ImageButton) findViewById(R.id.pause_button);
         buttonSave = (ImageButton) findViewById(R.id.save_button);
         textViewACWR = (TextView) findViewById(R.id.text_view_acwr);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -117,6 +122,8 @@ public class StopWatchActivity extends AppCompatActivity {
 
         String StringACWR = Double.valueOf(ACWR).toString();
         textViewACWR.setText(StringACWR);
+        int percentageACWR = (int) (ACWR*100)/2;
+        progressBar.setProgress(percentageACWR);
     }
 
     private static int getRandomHR() {

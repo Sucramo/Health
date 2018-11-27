@@ -126,6 +126,14 @@
             app:itemIconTint="@drawable/nav_item_color_state"
             app:itemTextColor="@drawable/nav_item_color_state"
             app:menu="@menu/bottom_navigation_menu" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="300dp"
+            android:layout_height="20dp"
+            android:layout_below="@id/text_view_acwr"
+            android:layout_centerHorizontal="true"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
