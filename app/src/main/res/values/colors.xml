@@ -7,5 +7,8 @@
     <color name="colorButton">#52b735</color>
     <color name="colorButtonDark">#41922a</color>
 
+    <color name="red">#FA5858</color>
+    <color name="green">#74DF00</color>
+
 
 </resources>

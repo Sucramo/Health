@@ -117,6 +117,21 @@
             android:text="ACWR"
             android:textSize="25sp" />
 
+        <com.example.marcu.health.CustomSeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_acwr"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:max="100"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:progress="0"
+            android:progressDrawable="@android:color/transparent"
+            android:thumb="@drawable/seek_thumb_normal"
+            android:thumbOffset="12dp" />
+
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation"
             android:layout_width="match_parent"
@@ -127,13 +142,7 @@
             app:itemTextColor="@drawable/nav_item_color_state"
             app:menu="@menu/bottom_navigation_menu" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="300dp"
-            android:layout_height="20dp"
-            android:layout_below="@id/text_view_acwr"
-            android:layout_centerHorizontal="true"/>
+
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
