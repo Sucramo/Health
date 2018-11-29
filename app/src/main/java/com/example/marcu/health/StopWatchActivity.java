@@ -13,6 +13,7 @@ import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class StopWatchActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class StopWatchActivity extends AppCompatActivity {
     private static ArrayList<Integer> al = new ArrayList<>();
     private static double ACWR;
     private CustomSeekBar seekbar;
+    private static DecimalFormat df = new DecimalFormat("#.##");
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
@@ -138,8 +140,15 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause.setVisibility(View.INVISIBLE);
         buttonSave.setVisibility(View.INVISIBLE);
 
-        String StringACWR = Double.valueOf(ACWR).toString();
-        textViewACWR.setText(StringACWR);
+        String StringACWR = df.format(Double.valueOf(ACWR));
+        if(ACWR == 0){
+            String daysLeft = Integer.toString(28-al.size());
+            textViewACWR.setText(daysLeft + " days left");
+        } else {
+            textViewACWR.setText(StringACWR);
+            int percentageACWR = (int) (ACWR * 100) / 2;
+            seekbar.setProgress(percentageACWR);
+        }
     }
 
     public void addATraining(View view) {
@@ -147,10 +156,15 @@ public class StopWatchActivity extends AppCompatActivity {
         MathActivity mathActivity = new MathActivity();
         ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR(), al);
 
-        String StringACWR = Double.valueOf(ACWR).toString();
-        textViewACWR.setText(StringACWR);
-        int percentageACWR = (int) (ACWR * 100) / 2;
-        seekbar.setProgress(percentageACWR);
+        String StringACWR = df.format(Double.valueOf(ACWR));
+        if(ACWR == 0){
+            String daysLeft = Integer.toString(28-al.size());
+            textViewACWR.setText(daysLeft + " days left");
+        } else {
+            textViewACWR.setText(StringACWR);
+            int percentageACWR = (int) (ACWR * 100) / 2;
+            seekbar.setProgress(percentageACWR);
+        }
     }
 
     private static int getRandomHR() {

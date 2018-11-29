@@ -114,7 +114,7 @@
             android:layout_below="@id/test_training_button"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
-            android:text="ACWR"
+            android:text=""
             android:textSize="25sp" />
 
         <com.example.marcu.health.CustomSeekBar
