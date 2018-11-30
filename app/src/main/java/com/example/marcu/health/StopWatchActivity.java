@@ -1,5 +1,6 @@
 package com.example.marcu.health;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -7,10 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 
@@ -22,6 +21,7 @@ public class StopWatchActivity extends AppCompatActivity {
     private boolean running;
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     private static ArrayList<Integer> al = new ArrayList<>();
+    Context context;
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
@@ -37,19 +37,25 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause = (ImageButton) findViewById(R.id.pause_button);
         buttonSave = (ImageButton) findViewById(R.id.save_button);
 
+
+
+        //Bottomnavigation stuff
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_profile:
-                        // open profile fragment
+                        Intent intent1 = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(intent1.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
                     case R.id.action_tracking:
-                        // open tracking fragment
+                        Intent intent2 = new Intent(getApplicationContext(), StopWatchActivity.class);
+                        startActivity(intent2.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
                     case R.id.action_history:
-                        //open history fragment
+                        Intent intent3 = new Intent(getApplicationContext(), HistoryActivity.class);
+                        startActivity(intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
 
                 }
