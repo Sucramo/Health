@@ -1,13 +1,17 @@
 package com.example.marcu.health;
-/*
+
+import java.util.ArrayList;
+
 public class MathTest {
+
+    private static ArrayList<Integer> al = new ArrayList<>();
 
 
     public static void main(String[] args) {
         MathActivity mathActivity = new MathActivity();
 
         for (int day = 1; day <= 50; day++) {
-            double ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR());
+            double ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR(), al);
         }
     }
 
@@ -23,4 +27,3 @@ public class MathTest {
 
 
 }
-*/

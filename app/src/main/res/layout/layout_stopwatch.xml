@@ -47,6 +47,7 @@
 
 
         <RelativeLayout
+            android:id="@+id/button_layout"
             android:layout_width="230dp"
             android:layout_height="100dp"
             android:layout_below="@+id/textviewHR"
@@ -95,6 +96,41 @@
 
 
         </RelativeLayout>
+
+        <Button
+            android:id="@+id/test_training_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_layout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:onClick="addATraining"
+            android:text="Add a test training" />
+
+        <TextView
+            android:id="@+id/text_view_acwr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/test_training_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text=""
+            android:textSize="25sp" />
+
+        <com.example.marcu.health.CustomSeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_acwr"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:max="100"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:progress="0"
+            android:progressDrawable="@android:color/transparent"
+            android:thumb="@drawable/seek_thumb_normal"
+            android:thumbOffset="12dp" />
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottom_navigation"

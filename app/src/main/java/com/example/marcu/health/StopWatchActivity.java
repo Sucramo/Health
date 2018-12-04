@@ -1,7 +1,5 @@
 package com.example.marcu.health;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -12,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class StopWatchActivity extends AppCompatActivity {
@@ -20,11 +20,15 @@ public class StopWatchActivity extends AppCompatActivity {
     private long pauseOffset;
     private boolean running;
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
+    TextView textViewACWR;
     private static ArrayList<Integer> al = new ArrayList<>();
-    Context context;
+
+    private static double ACWR;
+    private CustomSeekBar seekbar;
+    private static DecimalFormat df = new DecimalFormat("#.##");
+
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,15 +36,21 @@ public class StopWatchActivity extends AppCompatActivity {
         setContentView(R.layout.layout_stopwatch);
 
         chronometer = findViewById(R.id.chronometer);
-        buttonStartOne = (ImageButton) findViewById(R.id.start_button_one);
-        buttonStartTwo = (ImageButton) findViewById(R.id.start_button_two);
-        buttonPause = (ImageButton) findViewById(R.id.pause_button);
-        buttonSave = (ImageButton) findViewById(R.id.save_button);
 
 
 
         //Bottomnavigation stuff
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+
+        buttonStartOne = findViewById(R.id.start_button_one);
+        buttonStartTwo = findViewById(R.id.start_button_two);
+        buttonPause = findViewById(R.id.pause_button);
+        buttonSave = findViewById(R.id.save_button);
+        textViewACWR = findViewById(R.id.text_view_acwr);
+        seekbar = findViewById(R.id.seekBar);
+        initDataToSeekbar();
+        seekbar.setEnabled(false);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -57,12 +67,37 @@ public class StopWatchActivity extends AppCompatActivity {
                         Intent intent3 = new Intent(getApplicationContext(), HistoryActivity.class);
                         startActivity(intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
-
                 }
                 return true;
             }
         });
+    }
 
+    private void initDataToSeekbar() {
+        ArrayList<ProgressItem> progressItemList = new ArrayList<>();
+        // red span
+        ProgressItem mProgressItem = new ProgressItem();
+        float totalSpan = 20;
+        float redSpan = 8;
+        mProgressItem.progressItemPercentage = ((redSpan / totalSpan) * 100);
+        Log.i("Mainactivity", mProgressItem.progressItemPercentage + "");
+        mProgressItem.color = R.color.red;
+        progressItemList.add(mProgressItem);
+        // green span
+        mProgressItem = new ProgressItem();
+        float greenSpan = 5;
+        mProgressItem.progressItemPercentage = (greenSpan / totalSpan) * 100;
+        mProgressItem.color = R.color.green;
+        progressItemList.add(mProgressItem);
+        // red span 2
+        mProgressItem = new ProgressItem();
+        float redspan2 = 7;
+        mProgressItem.progressItemPercentage = (redspan2 / totalSpan) * 100;
+        mProgressItem.color = R.color.red;
+        progressItemList.add(mProgressItem);
+
+        seekbar.initData(progressItemList);
+        seekbar.invalidate();
     }
 
     public void startChronometer(View view) {
@@ -75,9 +110,7 @@ public class StopWatchActivity extends AppCompatActivity {
             buttonStartTwo.setVisibility(View.INVISIBLE);
             buttonPause.setVisibility(View.VISIBLE);
             buttonSave.setVisibility(View.VISIBLE);
-
         }
-
     }
 
     public void pauseChronometer(View view) {
@@ -93,7 +126,6 @@ public class StopWatchActivity extends AppCompatActivity {
             buttonPause.setVisibility(View.INVISIBLE);
             buttonSave.setVisibility(View.VISIBLE);
         }
-
     }
 
     public void resetChronometer(View view) {
@@ -105,8 +137,7 @@ public class StopWatchActivity extends AppCompatActivity {
         System.out.println("seconds: " + seconds);
         System.out.println("HR: " + HR);
         MathActivity mathActivity = new MathActivity();
-        double ACWR = mathActivity.getACWR(seconds, HR, al);
-
+        ACWR = mathActivity.getACWR(seconds, HR, al);
 
         chronometer.setBase(SystemClock.elapsedRealtime());
 
@@ -118,12 +149,40 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause.setVisibility(View.INVISIBLE);
         buttonSave.setVisibility(View.INVISIBLE);
 
+        String StringACWR = df.format(Double.valueOf(ACWR));
+        if(ACWR == 0){
+            String daysLeft = Integer.toString(28-al.size());
+            textViewACWR.setText(daysLeft + " days left");
+        } else {
+            textViewACWR.setText(StringACWR);
+            int percentageACWR = (int) (ACWR * 100) / 2;
+            seekbar.setProgress(percentageACWR);
+        }
+    }
 
+    public void addATraining(View view) {
+        al.add(0);
+        MathActivity mathActivity = new MathActivity();
+        ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR(), al);
+
+        String StringACWR = df.format(Double.valueOf(ACWR));
+        if(ACWR == 0){
+            String daysLeft = Integer.toString(28-al.size());
+            textViewACWR.setText(daysLeft + " days left");
+        } else {
+            textViewACWR.setText(StringACWR);
+            int percentageACWR = (int) (ACWR * 100) / 2;
+            seekbar.setProgress(percentageACWR);
+        }
     }
 
     private static int getRandomHR() {
 
-        return (int) (Math.random() * ((200 - 60) + 1)) + 60;
+        return (int) (Math.random() * ((280 - 120) + 1)) + 120;
     }
 
+    private static int getRandomMinutes() {
+
+        return (int) (Math.random() * ((100 - 30) + 1)) + 30;
+    }
 }
