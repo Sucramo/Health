@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Chronometer;
@@ -23,9 +22,11 @@ public class StopWatchActivity extends AppCompatActivity {
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     TextView textViewACWR;
     private static ArrayList<Integer> al = new ArrayList<>();
+
     private static double ACWR;
     private CustomSeekBar seekbar;
     private static DecimalFormat df = new DecimalFormat("#.##");
+
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
 
@@ -35,6 +36,12 @@ public class StopWatchActivity extends AppCompatActivity {
         setContentView(R.layout.layout_stopwatch);
 
         chronometer = findViewById(R.id.chronometer);
+
+
+
+        //Bottomnavigation stuff
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+
         buttonStartOne = findViewById(R.id.start_button_one);
         buttonStartTwo = findViewById(R.id.start_button_two);
         buttonPause = findViewById(R.id.pause_button);
@@ -44,19 +51,21 @@ public class StopWatchActivity extends AppCompatActivity {
         initDataToSeekbar();
         seekbar.setEnabled(false);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_profile:
-                        // open profile fragment
+                        Intent intent1 = new Intent(getApplicationContext(), ProfileActivity.class);
+                        startActivity(intent1.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
                     case R.id.action_tracking:
-                        // open tracking fragment
+                        Intent intent2 = new Intent(getApplicationContext(), StopWatchActivity.class);
+                        startActivity(intent2.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
                     case R.id.action_history:
-                        //open history fragment
+                        Intent intent3 = new Intent(getApplicationContext(), HistoryActivity.class);
+                        startActivity(intent3.setFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION));
                         break;
                 }
                 return true;
