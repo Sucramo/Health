@@ -170,6 +170,8 @@ public class StopWatchActivity extends AppCompatActivity {
         Toast.makeText(getBaseContext(),"Bluetooth connection established", Toast.LENGTH_LONG).show();
     }
 
+
+    //Listens for data via bluetooth
     private void ackListener(){
         final Handler handler = new Handler();
         final byte delimiter = 10;
