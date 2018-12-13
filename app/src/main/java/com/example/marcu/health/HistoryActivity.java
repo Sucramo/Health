@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends AppCompatActivity {
 
     //initialization of stuff
     ArrayList listItems = new ArrayList<>();
