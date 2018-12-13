@@ -157,7 +157,7 @@ public class StopWatchActivity extends AppCompatActivity {
     }
 
     /**
-     * This connects the arduino to a socket
+     * This connects the Arduino to a socket
      * @throws IOException
      */
     private void connectArduino() throws IOException{
