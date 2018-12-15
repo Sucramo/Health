@@ -116,21 +116,11 @@
 
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/test_training_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/button_layout"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:onClick="addATraining"
-            android:text="Add a test training" />
-
         <TextView
             android:id="@+id/text_view_acwr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/test_training_button"
+            android:layout_below="@id/button_layout"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:text=""
@@ -160,6 +150,15 @@
             app:itemIconTint="@drawable/nav_item_color_state"
             app:itemTextColor="@drawable/nav_item_color_state"
             app:menu="@menu/bottom_navigation_menu" />
+
+        <Button
+            android:id="@+id/dbButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:layout_above="@+id/chronometer"
+            android:text="DB"
+            android:textSize="10sp"/>
 
 
     </RelativeLayout>

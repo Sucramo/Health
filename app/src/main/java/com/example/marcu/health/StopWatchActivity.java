@@ -1,8 +1,8 @@
 package com.example.marcu.health;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,24 +11,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class StopWatchActivity extends AppCompatActivity {
+    private static final String TAG = "StopWatchActivity";
     private Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     TextView textViewACWR;
-    private static ArrayList<Integer> al = new ArrayList<>();
 
-    private static double ACWR;
     private CustomSeekBar seekbar;
     private static DecimalFormat df = new DecimalFormat("#.##");
+    public static DatabaseHelper databaseHelper;
+    static ArrayList<Integer> listData;
+    private static Date newDate;
+    private static int daysBetween;
 
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
@@ -39,7 +44,6 @@ public class StopWatchActivity extends AppCompatActivity {
         setContentView(R.layout.layout_stopwatch);
 
         chronometer = findViewById(R.id.chronometer);
-
 
         //Bottomnavigation stuff
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
@@ -52,6 +56,8 @@ public class StopWatchActivity extends AppCompatActivity {
         seekbar = findViewById(R.id.seekBar);
         initDataToSeekbar();
         seekbar.setEnabled(false);
+        Button button = (Button) findViewById(R.id.dbButton);
+        databaseHelper = new DatabaseHelper(this);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -73,8 +79,16 @@ public class StopWatchActivity extends AppCompatActivity {
                 return true;
             }
         });
-    }
 
+
+        // Button for opening database
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent dbmanager = new Intent(StopWatchActivity.this, AndroidDatabaseManager.class);
+                startActivity(dbmanager);
+            }
+        });
+    }
 
 
     private void initDataToSeekbar() {
@@ -136,12 +150,30 @@ public class StopWatchActivity extends AppCompatActivity {
         chronometer.stop();
 
         //This is for getting the ACWR
+        MathActivity mathActivity = new MathActivity();
         int seconds = (int) ((SystemClock.elapsedRealtime() - chronometer.getBase()) / 1000);
-        int HR = getRandomHR();
+        int HR = mathActivity.getRandomHR();
         System.out.println("seconds: " + seconds);
         System.out.println("HR: " + HR);
-        MathActivity mathActivity = new MathActivity();
-        ACWR = mathActivity.getACWR(seconds, HR, al);
+        int workLoadCurrentDay = (seconds * (HR / 10)) + 1;
+        addTrainingToDatabase(workLoadCurrentDay);
+
+        setSeekbar(mathActivity.getACWR(mathActivity.getAcuteWorkload(getAl()), mathActivity.getChronicWorkload(getAl())));
+        Log.d(TAG, "Al from database: " + getAl());
+
+        if (getAl().size() == 0) {
+            newDate = getNewDate();
+            System.out.println("first date: " + newDate);
+        } else {
+            Date oldDate = newDate;
+            newDate = getNewDate();
+
+            System.out.println("old date: " + oldDate);
+            System.out.println("new date: " + newDate);
+
+            daysBetween = (int) MathActivity.getDaysBetween(oldDate, newDate);
+            System.out.println("days between old and new date: " + daysBetween);
+        }
 
         chronometer.setBase(SystemClock.elapsedRealtime());
 
@@ -153,40 +185,45 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause.setVisibility(View.INVISIBLE);
         buttonSave.setVisibility(View.INVISIBLE);
 
-        String StringACWR = df.format(Double.valueOf(ACWR));
-        if (ACWR == 0) {
-            String daysLeft = Integer.toString(28 - al.size());
+    }
+
+    public static ArrayList<Integer> getAl() {
+        Cursor data = databaseHelper.getData();
+        listData = new ArrayList<>();
+        while (data.moveToNext()) {
+            listData.add(data.getInt(1));
+        }
+        return listData;
+    }
+
+    public void addTrainingToDatabase(int workloadCurrentDay) {
+        ArrayList<Integer> al = getAl();
+        if (al.size() == 0) {
+            databaseHelper.addData(workloadCurrentDay);
+        } else if (daysBetween == 0) {
+            int AuCurrentDay = al.get(al.size() - 1);
+            databaseHelper.updateAu(workloadCurrentDay + AuCurrentDay, al.size());
+        } else {
+            for (int i = 0; i < daysBetween - 1; i++) {
+                databaseHelper.addData(0);
+            }
+            databaseHelper.addData(workloadCurrentDay);
+        }
+    }
+
+    private static Date getNewDate() {
+        return new Date();
+    }
+
+    public void setSeekbar(double ACWR) {
+        if (Double.isNaN(ACWR)) {
+            String daysLeft = Integer.toString(28 - getAl().size());
             textViewACWR.setText(daysLeft + " days left");
         } else {
+            String StringACWR = df.format(Double.valueOf(ACWR));
             textViewACWR.setText(StringACWR);
             int percentageACWR = (int) (ACWR * 100) / 2;
             seekbar.setProgress(percentageACWR);
         }
-    }
-
-    public void addATraining(View view) {
-        al.add(0);
-        MathActivity mathActivity = new MathActivity();
-        ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR(), al);
-
-        String StringACWR = df.format(Double.valueOf(ACWR));
-        if (ACWR == 0) {
-            String daysLeft = Integer.toString(28 - al.size());
-            textViewACWR.setText(daysLeft + " days left");
-        } else {
-            textViewACWR.setText(StringACWR);
-            int percentageACWR = (int) (ACWR * 100) / 2;
-            seekbar.setProgress(percentageACWR);
-        }
-    }
-
-    private static int getRandomHR() {
-
-        return (int) (Math.random() * ((280 - 120) + 1)) + 120;
-    }
-
-    private static int getRandomMinutes() {
-
-        return (int) (Math.random() * ((100 - 30) + 1)) + 30;
     }
 }

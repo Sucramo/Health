@@ -11,7 +11,7 @@ public class MathTest {
         MathActivity mathActivity = new MathActivity();
 
         for (int day = 1; day <= 50; day++) {
-            double ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR(), al);
+            //double ACWR = mathActivity.getACWR(getRandomMinutes(), getRandomHR(), al);
         }
     }
 
