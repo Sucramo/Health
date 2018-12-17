@@ -80,6 +80,60 @@ public class StopWatchActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean findArduino(){
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBtAdapter == null){
+            Toast.makeText(getBaseContext(),"No Bluetooth adapter available", Toast.LENGTH_SHORT).show();
+        }
+
+        if(!mBtAdapter.isEnabled()){
+            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBT, 0);
+            Toast.makeText(getBaseContext(),"Turn on Bluetooth and try again", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+        if(pairedDevices.size() > 0){
+            for (BluetoothDevice device : pairedDevices){
+                String devName = device.getName();
+                devName = devName.replaceAll(" (\\r|\\n) ", "");
+
+                //Checks for the arduino board
+                if (devName.equals("Healthkit")){
+                    btDevice = device;
+                    Toast.makeText(getBaseContext(),"Healthkit connected)", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            }
+        }
+
+        Toast.makeText(getBaseContext(),"Bluetooth device NOT found", Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+    /**
+     * This connects the Arduino to a socket
+     * @throws IOException
+     */
+    private void connectArduino() throws IOException{
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        mBTSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+        mBTSocket.connect();
+        oStream = mBTSocket.getOutputStream();
+        iStream = mBTSocket.getInputStream();
+        ackListener();
+        Toast.makeText(getBaseContext(),"Bluetooth connection established", Toast.LENGTH_LONG).show();
+    }
+
+
+    //Listens for data via Bluetooth and displays the data on the TextView "heartrate"
+    private void ackListener(){
+        final Handler handler = new Handler();
+        final byte delimiter = 10;
+
 
         // Button for opening database
         button.setOnClickListener(new View.OnClickListener() {
