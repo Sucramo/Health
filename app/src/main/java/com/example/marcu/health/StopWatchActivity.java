@@ -144,6 +144,7 @@ public class StopWatchActivity extends AppCompatActivity {
                 String devName = device.getName();
                 devName = devName.replaceAll(" (\\r|\\n) ", "");
 
+                //Checks for the arduino board
                 if (devName.equals("Healthkit")){
                     btDevice = device;
                     Toast.makeText(getBaseContext(),"Healthkit connected)", Toast.LENGTH_SHORT).show();
@@ -171,7 +172,7 @@ public class StopWatchActivity extends AppCompatActivity {
     }
 
 
-    //Listens for data via bluetooth
+    //Listens for data via Bluetooth and displays the data on the TextView "heartrate"
     private void ackListener(){
         final Handler handler = new Handler();
         final byte delimiter = 10;
