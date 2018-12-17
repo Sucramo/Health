@@ -1,8 +1,12 @@
 package com.example.marcu.health;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,17 +15,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
 
 public class StopWatchActivity extends AppCompatActivity {
     private static final String TAG = "StopWatchActivity";
+    public BluetoothHandler myBtHandler;
     private Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
@@ -35,9 +47,29 @@ public class StopWatchActivity extends AppCompatActivity {
     private static Date newDate;
     private static int daysBetween;
 
+    private int REQ_BT_ENABLE = 1;
+
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
+
+    private BluetoothAdapter mBtAdapter;
+    public BluetoothDevice btDevice;
+    private ArrayAdapter<String> mPairedDevicesArrayAdapter;
+    public BluetoothSocket mBTSocket = null;
+
+    public InputStream iStream;
+    public OutputStream oStream;
+
+    public byte[] packetBytes;
+
+    private byte[] readBuffer;
+    private int readBufferIndex;
+
+    private volatile boolean stopListening;
+
+    private Button bt_button;
+    private TextView heartRate;
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +84,7 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonStartTwo = findViewById(R.id.start_button_two);
         buttonPause = findViewById(R.id.pause_button);
         buttonSave = findViewById(R.id.save_button);
+        bt_button = findViewById(R.id.bt_button);
         textViewACWR = findViewById(R.id.text_view_acwr);
         seekbar = findViewById(R.id.seekBar);
         initDataToSeekbar();
@@ -80,8 +113,35 @@ public class StopWatchActivity extends AppCompatActivity {
             }
         });
 
+        //Button connects only to the smart accessory we have set up
+        bt_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+                    myBtHandler.findArduino();
+                    myBtHandler.connectArduino();
+                } catch (IOException e){
+                    Toast.makeText(getBaseContext(), "Something went wrong, try again", Toast.LENGTH_LONG).show();
+                } catch (NullPointerException e2){
+                    Toast.makeText(getBaseContext(), "The arduino board was not found", Toast.LENGTH_LONG).show();
+                }
+
+                try {
+                    if (!myBtHandler.findArduino() == true) {
+                        Toast.makeText(getBaseContext(), "Arduino is not connected", Toast.LENGTH_LONG).show();
+                    } else {
+                        heartRate.setText(myBtHandler.getData());
+                    }
+                } catch (NullPointerException e){
+                    Toast.makeText(getBaseContext(), "No arduino board found", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
     }
 
+    /*
     private boolean findArduino(){
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null){
@@ -112,13 +172,10 @@ public class StopWatchActivity extends AppCompatActivity {
 
         Toast.makeText(getBaseContext(),"Bluetooth device NOT found", Toast.LENGTH_LONG).show();
         return false;
+
     }
 
-    /**
-     * This connects the Arduino to a socket
-     * @throws IOException
-     */
-    private void connectArduino() throws IOException{
+    private void connectArduino() throws IOException {
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
         mBTSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
         mBTSocket.connect();
@@ -130,19 +187,61 @@ public class StopWatchActivity extends AppCompatActivity {
 
 
     //Listens for data via Bluetooth and displays the data on the TextView "heartrate"
-    private void ackListener(){
+    private void ackListener() {
         final Handler handler = new Handler();
         final byte delimiter = 10;
 
+        stopListening = false;
+        readBufferIndex = 0;
+        readBuffer = new byte[1024];
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.currentThread().isInterrupted() && !stopListening){
+                    try{
+                        int input = iStream.available();
+                        if (input > 0){
+                            packetBytes = new byte[input];
+                            iStream.read(packetBytes);
+                            for (int i = 0; i < input; i++){
+                                byte b = packetBytes[i];
 
-        // Button for opening database
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent dbmanager = new Intent(StopWatchActivity.this, AndroidDatabaseManager.class);
-                startActivity(dbmanager);
+                                if (b == '>'){
+                                    byte[] encodedBytes = new byte[readBufferIndex];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+
+                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    readBufferIndex = 0;
+
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            heartRate.setText(data);
+                                        }
+                                    });
+                                }
+                                else{
+                                    readBuffer[readBufferIndex++] = b;
+                                }
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    heartRate.setText("" + packetBytes[0]);
+                                }
+                            });
+                        }
+                    } catch (IOException e){
+                        stopListening = true;
+                    }
+                }
             }
         });
+        thread.start();
+
     }
+    */
 
 
     private void initDataToSeekbar() {

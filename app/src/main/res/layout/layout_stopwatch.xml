@@ -160,7 +160,14 @@
             android:text="DB"
             android:textSize="10sp"/>
 
-
+        <Button
+            android:id="@+id/bt_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="207dp"
+            android:text="BT"
+            android:background="@drawable/ripple"/>
     </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
