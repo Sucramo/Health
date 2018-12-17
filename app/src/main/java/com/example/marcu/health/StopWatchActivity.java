@@ -39,6 +39,7 @@ public class StopWatchActivity extends AppCompatActivity {
     private boolean running;
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     TextView textViewACWR;
+    Handler h;
 
     private CustomSeekBar seekbar;
     private static DecimalFormat df = new DecimalFormat("#.##");
@@ -47,27 +48,22 @@ public class StopWatchActivity extends AppCompatActivity {
     private static Date newDate;
     private static int daysBetween;
 
-    private int REQ_BT_ENABLE = 1;
-
-    public static String EXTRA_DEVICE_ADDRESS = "device_address";
-
     private BluetoothAdapter mBtAdapter;
     public BluetoothDevice btDevice;
-    private ArrayAdapter<String> mPairedDevicesArrayAdapter;
-    public BluetoothSocket mBTSocket = null;
 
-    public InputStream iStream;
-    public OutputStream oStream;
-
+    public StringBuilder sb;
+    final int RECIEVE_MESSAGE = 1;
     public byte[] packetBytes;
 
     private byte[] readBuffer;
     private int readBufferIndex;
 
-    private volatile boolean stopListening;
-
     private Button bt_button;
     private TextView heartRate;
+    private BluetoothSocket mBTSocket;
+    private OutputStream oStream;
+    private InputStream iStream;
+    private boolean stopListening;
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
     @Override
@@ -85,6 +81,7 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonPause = findViewById(R.id.pause_button);
         buttonSave = findViewById(R.id.save_button);
         bt_button = findViewById(R.id.bt_button);
+        heartRate = findViewById(R.id.heartrate);
         textViewACWR = findViewById(R.id.text_view_acwr);
         seekbar = findViewById(R.id.seekBar);
         initDataToSeekbar();
@@ -117,31 +114,18 @@ public class StopWatchActivity extends AppCompatActivity {
         bt_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                try {
-                    myBtHandler.findArduino();
-                    myBtHandler.connectArduino();
-                } catch (IOException e){
-                    Toast.makeText(getBaseContext(), "Something went wrong, try again", Toast.LENGTH_LONG).show();
-                } catch (NullPointerException e2){
-                    Toast.makeText(getBaseContext(), "The arduino board was not found", Toast.LENGTH_LONG).show();
+                findArduino();
+                try{
+                    connectArduino();
+                }catch (Exception e){
+                    Toast.makeText(getBaseContext(), "cannot connect", Toast.LENGTH_LONG).show();
                 }
 
-                try {
-                    if (!myBtHandler.findArduino() == true) {
-                        Toast.makeText(getBaseContext(), "Arduino is not connected", Toast.LENGTH_LONG).show();
-                    } else {
-                        heartRate.setText(myBtHandler.getData());
-                    }
-                } catch (NullPointerException e){
-                    Toast.makeText(getBaseContext(), "No arduino board found", Toast.LENGTH_LONG).show();
-                }
             }
         });
 
     }
 
-    /*
     private boolean findArduino(){
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBtAdapter == null){
@@ -164,7 +148,7 @@ public class StopWatchActivity extends AppCompatActivity {
                 //Checks for the arduino board
                 if (devName.equals("Healthkit")){
                     btDevice = device;
-                    Toast.makeText(getBaseContext(),"Healthkit connected)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(),"Healthkit connected", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             }
@@ -172,8 +156,8 @@ public class StopWatchActivity extends AppCompatActivity {
 
         Toast.makeText(getBaseContext(),"Bluetooth device NOT found", Toast.LENGTH_LONG).show();
         return false;
-
     }
+
 
     private void connectArduino() throws IOException {
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -211,7 +195,7 @@ public class StopWatchActivity extends AppCompatActivity {
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
 
                                     final String data = new String(encodedBytes, "US-ASCII");
-                                    readBufferIndex = 0;
+                                    readBufferIndex = 1;
 
                                     handler.post(new Runnable() {
                                         @Override
@@ -239,10 +223,7 @@ public class StopWatchActivity extends AppCompatActivity {
             }
         });
         thread.start();
-
     }
-    */
-
 
     private void initDataToSeekbar() {
         ArrayList<ProgressItem> progressItemList = new ArrayList<>();

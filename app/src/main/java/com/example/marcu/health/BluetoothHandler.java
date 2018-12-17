@@ -52,14 +52,15 @@ public class BluetoothHandler {
     }
 
     /**
-     *
+     * Findes the arduino accessory, if it is a paired device already
      * @return true if it finds the Arduino
      */
+    /*
     public boolean findArduino(){
         mBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        /*
-        if (mBtAdapter == null){
+
+        /*if (mBtAdapter == null){
             Toast.makeText(getBaseContext(),"No Bluetooth adapter available", Toast.LENGTH_SHORT).show();
         }*/
 
@@ -69,7 +70,7 @@ public class BluetoothHandler {
             startActivityForResult(enableBT, 0);
             Toast.makeText(getBaseContext(),"Turn on Bluetooth and try again", Toast.LENGTH_SHORT).show();
             return false;
-        }*/
+        }
 
         Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
         if(pairedDevices.size() > 0){
@@ -85,7 +86,8 @@ public class BluetoothHandler {
         }
 
         return false;
-    }
+    }*/
+
 
     //Listens for data via Bluetooth and displays the data on the TextView "heartrate"
     public void ackListener() {
@@ -138,6 +140,6 @@ public class BluetoothHandler {
     }
 
     public String getData() {
-        return dataStored;
+        return data;
     }
 }
