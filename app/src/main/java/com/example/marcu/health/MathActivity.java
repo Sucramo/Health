@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class MathActivity {
 
-    public static long getDaysBetween(Date one, Date two) {
+    public long getDaysBetween(Date one, Date two) {
         long difference = 0;
         try {
             difference = ((one.getTime() - two.getTime()) / 86400000);
@@ -48,7 +48,7 @@ public class MathActivity {
         return ACWR;
     }
 
-    public static int getRandomHR() {
+    public int getRandomHR() {
         return (int) (Math.random() * ((280 - 120) + 1)) + 120;
     }
 

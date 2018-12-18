@@ -17,8 +17,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class StopWatchActivity extends AppCompatActivity {
     private static final String TAG = "StopWatchActivity";
@@ -27,12 +30,13 @@ public class StopWatchActivity extends AppCompatActivity {
     private boolean running;
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     TextView textViewACWR;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     private CustomSeekBar seekbar;
     private static DecimalFormat df = new DecimalFormat("#.##");
     public static DatabaseHelper databaseHelper;
     static ArrayList<Integer> listData;
-    private static Date newDate;
+    static ArrayList<String> listDataDates;
     private static int daysBetween;
 
 
@@ -144,7 +148,7 @@ public class StopWatchActivity extends AppCompatActivity {
         }
     }
 
-    public void resetChronometer(View view) {
+    public void resetChronometer(View view) throws ParseException {
         chronometer.stop();
 
         //This is for getting the ACWR
@@ -159,20 +163,6 @@ public class StopWatchActivity extends AppCompatActivity {
         setSeekbar(mathActivity.getACWR(mathActivity.getAcuteWorkload(getAl()), mathActivity.getChronicWorkload(getAl())));
         Log.d(TAG, "Al from database: " + getAl());
 
-        if (getAl().size() == 0) {
-            newDate = getNewDate();
-            System.out.println("first date: " + newDate);
-        } else {
-            Date oldDate = newDate;
-            newDate = getNewDate();
-
-            System.out.println("old date: " + oldDate);
-            System.out.println("new date: " + newDate);
-
-            daysBetween = (int) MathActivity.getDaysBetween(oldDate, newDate);
-            System.out.println("days between old and new date: " + daysBetween);
-        }
-
         chronometer.setBase(SystemClock.elapsedRealtime());
 
         pauseOffset = 0;
@@ -186,26 +176,43 @@ public class StopWatchActivity extends AppCompatActivity {
     }
 
     public static ArrayList<Integer> getAl() {
-        Cursor data = databaseHelper.getData();
+        Cursor cursor = databaseHelper.getData();
         listData = new ArrayList<>();
-        while (data.moveToNext()) {
-            listData.add(data.getInt(1));
+        while (cursor.moveToNext()) {
+            listData.add(cursor.getInt(1));
         }
         return listData;
     }
 
-    public void addTrainingToDatabase(int workloadCurrentDay) {
+    public static ArrayList<String> getDateAl() {
+        Cursor cursor = databaseHelper.getData();
+        listDataDates = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            listDataDates.add(cursor.getString(2));
+        }
+        return listDataDates;
+    }
+
+    public void addTrainingToDatabase(int workloadCurrentDay) throws ParseException {
         ArrayList<Integer> al = getAl();
         if (al.size() == 0) {
             databaseHelper.addData(workloadCurrentDay);
-        } else if (daysBetween == 0) {
-            int AuCurrentDay = al.get(al.size() - 1);
-            databaseHelper.updateAu(workloadCurrentDay + AuCurrentDay, al.size());
         } else {
-            for (int i = 0; i < daysBetween - 1; i++) {
-                databaseHelper.addData(0);
+            MathActivity mathActivity = new MathActivity();
+            Date oldDate = simpleDateFormat.parse(getDateAl().get(getDateAl().size() - 1));
+
+            System.out.println("old date: " + oldDate);
+            System.out.println("new date: " + getNewDate());
+            System.out.println("days between old and new date: " + mathActivity.getDaysBetween(oldDate, getNewDate()));
+            if (mathActivity.getDaysBetween(oldDate, getNewDate()) == 0) {
+                int AuCurrentDay = al.get(al.size() - 1);
+                databaseHelper.updateAu(workloadCurrentDay + AuCurrentDay, al.size());
+            } else {
+                for (int i = 0; i < mathActivity.getDaysBetween(oldDate, getNewDate()) - 1; i++) {
+                    databaseHelper.addData(0);
+                }
+                databaseHelper.addData(workloadCurrentDay);
             }
-            databaseHelper.addData(workloadCurrentDay);
         }
     }
 
