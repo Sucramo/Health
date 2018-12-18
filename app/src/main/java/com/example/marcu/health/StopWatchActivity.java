@@ -33,7 +33,6 @@ import java.util.UUID;
 
 public class StopWatchActivity extends AppCompatActivity {
     private static final String TAG = "StopWatchActivity";
-    public BluetoothHandler myBtHandler;
     private Chronometer chronometer;
     private long pauseOffset;
     private boolean running;
@@ -118,7 +117,7 @@ public class StopWatchActivity extends AppCompatActivity {
                 try{
                     connectArduino();
                 }catch (Exception e){
-                    Toast.makeText(getBaseContext(), "cannot connect", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getBaseContext(), "cannot connect", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -191,16 +190,19 @@ public class StopWatchActivity extends AppCompatActivity {
                                 byte b = packetBytes[i];
 
                                 if (b == '>'){
-                                    byte[] encodedBytes = new byte[readBufferIndex];
+                                    final byte[] encodedBytes = new byte[readBufferIndex];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
 
-                                    final String data = new String(encodedBytes, "US-ASCII");
+                                    final String data = new String(encodedBytes);
+                                    final int var = Integer.parseInt(data);
                                     readBufferIndex = 1;
 
                                     handler.post(new Runnable() {
                                         @Override
                                         public void run() {
-                                            heartRate.setText(data);
+                                            //int var = Integer.decode(data);
+                                            heartRate.setText(var);
+                                            System.out.println(data + "byte array: " + encodedBytes);
                                         }
                                     });
                                 }
@@ -225,6 +227,20 @@ public class StopWatchActivity extends AppCompatActivity {
         thread.start();
     }
 
+    //Important to read
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
+    //Send the data to the seekBar
     private void initDataToSeekbar() {
         ArrayList<ProgressItem> progressItemList = new ArrayList<>();
         // red span

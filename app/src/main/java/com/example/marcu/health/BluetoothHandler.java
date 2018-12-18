@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 /**
- * Class handles Bluetooth connection.
+ * Class handles Bluetooth connection. But since it did not work, the methods was directly implemented into the stopwatch-activity
  * The connection is limited to the smart accessory that we have created.
  */
 public class BluetoothHandler {
