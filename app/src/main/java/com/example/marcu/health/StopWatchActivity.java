@@ -122,7 +122,7 @@ public class StopWatchActivity extends AppCompatActivity {
                 Intent dbmanager = new Intent(StopWatchActivity.this, AndroidDatabaseManager.class);
                 startActivity(dbmanager);
             }
-        }
+        });
 
 
         //Button connects only to the smart accessory we have set up
@@ -130,12 +130,11 @@ public class StopWatchActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 findArduino();
-                try{
+                try {
                     connectArduino();
-                }catch (Exception e){
+                } catch (Exception e) {
                     //Toast.makeText(getBaseContext(), "cannot connect", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 
@@ -196,16 +195,16 @@ public class StopWatchActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (!Thread.currentThread().isInterrupted() && !stopListening){
-                    try{
+                while (!Thread.currentThread().isInterrupted() && !stopListening) {
+                    try {
                         int input = iStream.available();
-                        if (input > 0){
+                        if (input > 0) {
                             packetBytes = new byte[input];
                             iStream.read(packetBytes);
-                            for (int i = 0; i < input; i++){
+                            for (int i = 0; i < input; i++) {
                                 byte b = packetBytes[i];
 
-                                if (b == '>'){
+                                if (b == '>') {
                                     final byte[] encodedBytes = new byte[readBufferIndex];
                                     System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
 
@@ -221,8 +220,7 @@ public class StopWatchActivity extends AppCompatActivity {
                                             System.out.println(data + "byte array: " + encodedBytes);
                                         }
                                     });
-                                }
-                                else{
+                                } else {
                                     readBuffer[readBufferIndex++] = b;
                                 }
                             }
@@ -234,14 +232,14 @@ public class StopWatchActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                    } catch (IOException e){
+                    } catch (IOException e) {
                         stopListening = true;
                     }
                 }
+            }
         });
-        thread.start();
+            thread.start();
     }
-
 
     //Important to read
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
