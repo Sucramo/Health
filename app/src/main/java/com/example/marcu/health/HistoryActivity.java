@@ -60,6 +60,24 @@ public class HistoryActivity extends AppCompatActivity {
             }
         });
 
+        for (int i = 0; i <= 29; i++){
+
+            ListView listView = findViewById(R.id.listView);
+
+            listItems.add(0, formater.format(date.getTime()));
+            date.roll(Calendar.DAY_OF_YEAR, true);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+
+            //set adapter into listview
+            listView.setAdapter(adapter);
+
+
+            if (listItems.size() == 30) {
+                listItems.remove(28);
+
+            }
+        }
+
         if (savedInstanceState != null) {
 
             listItems = savedInstanceState.getStringArrayList("savedList");
@@ -86,7 +104,7 @@ public class HistoryActivity extends AppCompatActivity {
 
     }
 
-
+    /*
     //method for adding data to the list
     public void addItems(View v) {
 
@@ -109,10 +127,10 @@ public class HistoryActivity extends AppCompatActivity {
 
     }
 
-
     private void loadHistoryList() {
         //get data from database
     }
+    */
 
 
 }

@@ -28,7 +28,7 @@
 
     </android.support.v7.widget.Toolbar>
 
-
+<!--
     <Button
         android:id="@+id/addBtn"
         android:layout_width="wrap_content"
@@ -36,6 +36,7 @@
         android:layout_alignParentEnd="true"
         android:onClick="addItems"
         android:text="Add" />
+-->
 
     <ListView
         android:id="@+id/listView"

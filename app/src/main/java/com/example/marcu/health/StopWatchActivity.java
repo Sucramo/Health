@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
@@ -52,22 +51,16 @@ public class StopWatchActivity extends AppCompatActivity {
     public static DatabaseHelper databaseHelper;
     static ArrayList<Integer> listData;
     static ArrayList<String> listDataDates;
-    private static int daysBetween;
+    //private static int daysBetween;
 
-    private BluetoothAdapter mBtAdapter;
     public BluetoothDevice btDevice;
 
-    public StringBuilder sb;
-    final int RECIEVE_MESSAGE = 1;
     public byte[] packetBytes;
 
     private byte[] readBuffer;
     private int readBufferIndex;
 
-    private Button bt_button;
     private TextView heartRate;
-    private BluetoothSocket mBTSocket;
-    private OutputStream oStream;
     private InputStream iStream;
     private boolean stopListening;
 
@@ -86,13 +79,13 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonStartTwo = findViewById(R.id.start_button_two);
         buttonPause = findViewById(R.id.pause_button);
         buttonSave = findViewById(R.id.save_button);
-        bt_button = findViewById(R.id.bt_button);
+        Button bt_button = findViewById(R.id.bt_button);
         heartRate = findViewById(R.id.heartrate);
         textViewACWR = findViewById(R.id.text_view_acwr);
         seekbar = findViewById(R.id.seekBar);
         initDataToSeekbar();
         seekbar.setEnabled(false);
-        Button button = (Button) findViewById(R.id.dbButton);
+        //Button button = findViewById(R.id.dbButton);
         databaseHelper = new DatabaseHelper(this);
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -115,7 +108,8 @@ public class StopWatchActivity extends AppCompatActivity {
                 return true;
             }
         });
-      
+
+        /*
         // Button for opening database
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -123,7 +117,7 @@ public class StopWatchActivity extends AppCompatActivity {
                 startActivity(dbmanager);
             }
         });
-
+        */
 
         //Button connects only to the smart accessory we have set up
         bt_button.setOnClickListener(new View.OnClickListener() {
@@ -133,54 +127,58 @@ public class StopWatchActivity extends AppCompatActivity {
                 try {
                     connectArduino();
                 } catch (Exception e) {
-                    //Toast.makeText(getBaseContext(), "cannot connect", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
                 }
             }
         });
-
     }
 
-    private boolean findArduino(){
-        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBtAdapter == null){
-            Toast.makeText(getBaseContext(),"No Bluetooth adapter available", Toast.LENGTH_SHORT).show();
+    private boolean findArduino() {
+
+        try {
+        BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBtAdapter == null) {
+            Toast.makeText(getBaseContext(), "No Bluetooth adapter available", Toast.LENGTH_SHORT).show();
         }
 
-        if(!mBtAdapter.isEnabled()){
-            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBT, 0);
-            Toast.makeText(getBaseContext(),"Turn on Bluetooth and try again", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+            if (!mBtAdapter.isEnabled()) {
+                Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBT, 0);
+                Toast.makeText(getBaseContext(), "Turn on Bluetooth and try again", Toast.LENGTH_SHORT).show();
+                return false;
+            }
 
         Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
-        if(pairedDevices.size() > 0){
-            for (BluetoothDevice device : pairedDevices){
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
                 String devName = device.getName();
                 devName = devName.replaceAll(" (\\r|\\n) ", "");
 
                 //Checks for the arduino board
-                if (devName.equals("Healthkit")){
+                if (devName.equals("Healthkit")) {
                     btDevice = device;
-                    Toast.makeText(getBaseContext(),"Healthkit connected", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "Healthkit connected", Toast.LENGTH_SHORT).show();
                     return true;
                 }
             }
         }
+        } catch (NullPointerException e) {
+            Toast.makeText(getBaseContext(), "Bluetooth device NOT found", Toast.LENGTH_LONG).show();
+        }
 
-        Toast.makeText(getBaseContext(),"Bluetooth device NOT found", Toast.LENGTH_LONG).show();
+
         return false;
     }
 
 
     private void connectArduino() throws IOException {
         UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-        mBTSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+        BluetoothSocket mBTSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
         mBTSocket.connect();
-        oStream = mBTSocket.getOutputStream();
+        OutputStream oStream = mBTSocket.getOutputStream();
         iStream = mBTSocket.getInputStream();
         ackListener();
-        Toast.makeText(getBaseContext(),"Bluetooth connection established", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Bluetooth connection established", Toast.LENGTH_LONG).show();
     }
 
 
@@ -238,7 +236,7 @@ public class StopWatchActivity extends AppCompatActivity {
                 }
             }
         });
-            thread.start();
+        thread.start();
     }
 
     //Important to read
@@ -246,7 +244,7 @@ public class StopWatchActivity extends AppCompatActivity {
 
     public static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];

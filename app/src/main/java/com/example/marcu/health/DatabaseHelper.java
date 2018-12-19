@@ -64,6 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return data;
     }
 
+    /*
     // THIS IS JUST FOR THE IMPORTED "AndroidDataBaseManager class"
     public ArrayList<Cursor> getData(String Query) {
         //get writable database
@@ -108,5 +109,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return alc;
         }
     }
+    */
 
 }

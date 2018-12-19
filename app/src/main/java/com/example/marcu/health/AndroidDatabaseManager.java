@@ -1,4 +1,4 @@
-//add your package name here example: package com.example.dbm;
+/*
 package com.example.marcu.health;
 
 //all required import files
@@ -30,6 +30,8 @@ import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
+
+//THIS CLASS IS DOWNLOAODED FROM https://github.com/sanathp/DatabaseManager_For_Android and is used for viewing the SQLite database
 
 public class AndroidDatabaseManager extends Activity implements OnItemClickListener {
 
@@ -1289,3 +1291,4 @@ public class AndroidDatabaseManager extends Activity implements OnItemClickListe
 	}
 
 }
+*/
