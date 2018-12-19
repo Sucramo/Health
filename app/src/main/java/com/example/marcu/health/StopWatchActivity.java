@@ -1,8 +1,12 @@
 package com.example.marcu.health;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,17 +15,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
+import java.util.UUID;
 import java.util.Locale;
+
 
 public class StopWatchActivity extends AppCompatActivity {
     private static final String TAG = "StopWatchActivity";
@@ -30,7 +42,10 @@ public class StopWatchActivity extends AppCompatActivity {
     private boolean running;
     ImageButton buttonStartOne, buttonStartTwo, buttonPause, buttonSave;
     TextView textViewACWR;
+
+    Handler h;
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
 
     private CustomSeekBar seekbar;
     private static DecimalFormat df = new DecimalFormat("#.##");
@@ -39,9 +54,24 @@ public class StopWatchActivity extends AppCompatActivity {
     static ArrayList<String> listDataDates;
     private static int daysBetween;
 
+    private BluetoothAdapter mBtAdapter;
+    public BluetoothDevice btDevice;
+
+    public StringBuilder sb;
+    final int RECIEVE_MESSAGE = 1;
+    public byte[] packetBytes;
+
+    private byte[] readBuffer;
+    private int readBufferIndex;
+
+    private Button bt_button;
+    private TextView heartRate;
+    private BluetoothSocket mBTSocket;
+    private OutputStream oStream;
+    private InputStream iStream;
+    private boolean stopListening;
 
     //RIGHT NOW THE SECONDS IS USED AS MINUTES FOR THE SAKE OF TESTING
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +86,8 @@ public class StopWatchActivity extends AppCompatActivity {
         buttonStartTwo = findViewById(R.id.start_button_two);
         buttonPause = findViewById(R.id.pause_button);
         buttonSave = findViewById(R.id.save_button);
+        bt_button = findViewById(R.id.bt_button);
+        heartRate = findViewById(R.id.heartrate);
         textViewACWR = findViewById(R.id.text_view_acwr);
         seekbar = findViewById(R.id.seekBar);
         initDataToSeekbar();
@@ -83,15 +115,147 @@ public class StopWatchActivity extends AppCompatActivity {
                 return true;
             }
         });
-
+      
         // Button for opening database
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent dbmanager = new Intent(StopWatchActivity.this, AndroidDatabaseManager.class);
                 startActivity(dbmanager);
             }
+        }
+
+
+        //Button connects only to the smart accessory we have set up
+        bt_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findArduino();
+                try{
+                    connectArduino();
+                }catch (Exception e){
+                    //Toast.makeText(getBaseContext(), "cannot connect", Toast.LENGTH_LONG).show();
+                }
+
+            }
         });
+
     }
+
+    private boolean findArduino(){
+        mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBtAdapter == null){
+            Toast.makeText(getBaseContext(),"No Bluetooth adapter available", Toast.LENGTH_SHORT).show();
+        }
+
+        if(!mBtAdapter.isEnabled()){
+            Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBT, 0);
+            Toast.makeText(getBaseContext(),"Turn on Bluetooth and try again", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+        if(pairedDevices.size() > 0){
+            for (BluetoothDevice device : pairedDevices){
+                String devName = device.getName();
+                devName = devName.replaceAll(" (\\r|\\n) ", "");
+
+                //Checks for the arduino board
+                if (devName.equals("Healthkit")){
+                    btDevice = device;
+                    Toast.makeText(getBaseContext(),"Healthkit connected", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            }
+        }
+
+        Toast.makeText(getBaseContext(),"Bluetooth device NOT found", Toast.LENGTH_LONG).show();
+        return false;
+    }
+
+
+    private void connectArduino() throws IOException {
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+        mBTSocket = btDevice.createRfcommSocketToServiceRecord(uuid);
+        mBTSocket.connect();
+        oStream = mBTSocket.getOutputStream();
+        iStream = mBTSocket.getInputStream();
+        ackListener();
+        Toast.makeText(getBaseContext(),"Bluetooth connection established", Toast.LENGTH_LONG).show();
+    }
+
+
+    //Listens for data via Bluetooth and displays the data on the TextView "heartrate"
+    private void ackListener() {
+        final Handler handler = new Handler();
+        final byte delimiter = 10;
+
+        stopListening = false;
+        readBufferIndex = 0;
+        readBuffer = new byte[1024];
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!Thread.currentThread().isInterrupted() && !stopListening){
+                    try{
+                        int input = iStream.available();
+                        if (input > 0){
+                            packetBytes = new byte[input];
+                            iStream.read(packetBytes);
+                            for (int i = 0; i < input; i++){
+                                byte b = packetBytes[i];
+
+                                if (b == '>'){
+                                    final byte[] encodedBytes = new byte[readBufferIndex];
+                                    System.arraycopy(readBuffer, 0, encodedBytes, 0, encodedBytes.length);
+
+                                    final String data = new String(encodedBytes);
+                                    final int var = Integer.parseInt(data);
+                                    readBufferIndex = 1;
+
+                                    handler.post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //int var = Integer.decode(data);
+                                            heartRate.setText(var);
+                                            System.out.println(data + "byte array: " + encodedBytes);
+                                        }
+                                    });
+                                }
+                                else{
+                                    readBuffer[readBufferIndex++] = b;
+                                }
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    heartRate.setText("" + packetBytes[0]);
+                                }
+                            });
+                        }
+                    } catch (IOException e){
+                        stopListening = true;
+                    }
+                }
+        });
+        thread.start();
+    }
+
+
+    //Important to read
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+
 
     private void initDataToSeekbar() {
         ArrayList<ProgressItem> progressItemList = new ArrayList<>();
